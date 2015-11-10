@@ -1,12 +1,13 @@
-let React = require('react');
-let { GridList, GridTile } = require('material-ui');
+const React = require('react');
+const { GridList, GridTile, Paper } = require('material-ui');
 
-let StarBorder = require('svg-icons/toggle/star-border');
-let IconButton = require('icon-button');
+const StarBorder = require('svg-icons/toggle/star-border');
+const IconButton = require('icon-button');
 
-let ComponentDoc = require('../../component-doc');
-let Code = require('grid-list-code');
-let CodeExample = require('../../code-example/code-example');
+const ComponentDoc = require('../../component-doc');
+const Code = require('grid-list-code');
+const CodeExample = require('../../code-example/code-example');
+const CodeBlock = require('../../code-example/code-block');
 
 class GridListPage extends React.Component {
 
@@ -42,6 +43,12 @@ class GridListPage extends React.Component {
             type: 'number',
             header: 'optional',
             desc: 'Number of px for one cell height. Defaults to 180.',
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the grid list\'s root element.',
           },
         ],
       },
@@ -95,6 +102,12 @@ class GridListPage extends React.Component {
             type: 'number',
             header: 'optional',
             desc: 'Height of the tile in number of grid cells. Defaults to 1.',
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the grid tile\'s root element.',
           },
           {
             name: 'rootClass',
@@ -173,6 +186,17 @@ class GridListPage extends React.Component {
         code={this.code}
         desc={this.desc}
         componentInfo={this.componentInfo}>
+
+        <Paper style = {{marginBottom: '22px'}}>
+          <CodeBlock>
+          {
+            '//Import statement:\nconst GridList = require(\'material-ui/lib/grid-list/grid-list\');\n' +
+            'const GridTile = require(\'material-ui/lib/grid-list/grid-tile\');\n\n' +
+            '//See material-ui/lib/index.js for more\n'
+          }
+          </CodeBlock>
+        </Paper>
+
         <CodeExample code={Code}>
           <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around'}}>
             {/* Basic grid list with mostly default options */}

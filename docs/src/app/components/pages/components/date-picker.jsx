@@ -1,9 +1,9 @@
-let React = require('react');
-let { DatePicker, TextField, Toggle } = require('material-ui');
-let ComponentDoc = require('../../component-doc');
-let Code = require('date-picker-code');
-let CodeExample = require('../../code-example/code-example');
-
+const React = require('react');
+const { DatePicker, TextField, Paper, Toggle } = require('material-ui');
+const ComponentDoc = require('../../component-doc');
+const Code = require('date-picker-code');
+const CodeExample = require('../../code-example/code-example');
+const CodeBlock = require('../../code-example/code-block');
 
 export default class DatePickerPage extends React.Component {
   constructor(props) {
@@ -29,6 +29,12 @@ export default class DatePickerPage extends React.Component {
       {
         name: 'Props',
         infoArray: [
+          {
+            name: 'container',
+            type: 'one of: dialog, container',
+            header: 'default: dialog',
+            desc: 'The date pickers container type',
+          },
           {
             name: 'DateTimeFormat',
             type: 'func',
@@ -196,6 +202,17 @@ export default class DatePickerPage extends React.Component {
       <ComponentDoc
         name="Date Picker"
         componentInfo={componentInfo}>
+
+        <Paper style = {{marginBottom: '22px'}}>
+          <CodeBlock>
+          {
+            '//Import statements:\nconst DatePicker = require(\'material-ui/lib/date-picker/date-picker\');\n' +
+            'const DatePickerDialog = require(\'material-ui/lib/date-picker/date-picker-dialog\');\n\n' +
+            '//See material-ui/lib/index.js for more\n'
+          }
+          </CodeBlock>
+        </Paper>
+
         <CodeExample code={Code}>
           <DatePicker
             hintText="Portrait Dialog" />
@@ -203,6 +220,15 @@ export default class DatePickerPage extends React.Component {
           <DatePicker
             hintText="Landscape Dialog"
             mode="landscape" />
+
+          <DatePicker
+            hintText="Inline"
+            container="inline" />
+
+          <DatePicker
+            hintText="Inline (AutoOk)"
+            container="inline"
+            autoOk={true} />
 
           <DatePicker
             hintText="Controlled Date Input"

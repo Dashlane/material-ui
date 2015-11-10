@@ -51,6 +51,7 @@ const LeftNav = React.createClass({
     menuItemClassName: React.PropTypes.string,
     menuItemClassNameSubheader: React.PropTypes.string,
     menuItemClassNameLink: React.PropTypes.string,
+    style: React.PropTypes.object,
   },
 
   windowListeners: {
@@ -82,7 +83,10 @@ const LeftNav = React.createClass({
   //from the parent / owner using context
   componentWillReceiveProps (nextProps, nextContext) {
     let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
+    this.setState({
+      muiTheme: newMuiTheme,
+      open: (this.props.docked !== nextProps.docked) ? nextProps.docked : this.state.open,
+    });
   },
 
   componentDidMount() {

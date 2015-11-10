@@ -62,6 +62,8 @@ const Snackbar = React.createClass({
     onShow: React.PropTypes.func,
     onDismiss: React.PropTypes.func,
     openOnMount: React.PropTypes.bool,
+    style: React.PropTypes.object,
+    bodyStyle: React.PropTypes.object,
   },
 
   //for passing default theme context to children
@@ -214,6 +216,7 @@ const Snackbar = React.createClass({
     const {
       onActionTouchTap,
       style,
+      bodyStyle,
       ...others,
     } = this.props;
     const styles = this.getStyles();
@@ -238,11 +241,13 @@ const Snackbar = React.createClass({
       );
     }
 
+    const mergedBodyStyle = this.mergeStyles(styles.body, bodyStyle);
+
     const contentStyle = open ? this.mergeStyles(styles.content, styles.contentWhenOpen) : styles.content;
 
     return (
       <div {...others} style={rootStyles}>
-        <div style={styles.body}>
+        <div style={mergedBodyStyle}>
           <div style={contentStyle}>
             <span>{message}</span>
             {actionButton}
