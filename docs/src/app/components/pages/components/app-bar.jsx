@@ -11,6 +11,12 @@ const IconMenu = require('menus/icon-menu');
 const MenuItem = require('menus/menu-item');
 const MoreVertIcon = require('svg-icons/navigation/more-vert');
 
+const styles = {
+  title: {
+    cursor: 'pointer',
+  },
+};
+
 export default class AppBarPage extends React.Component {
 
   constructor(props) {
@@ -68,7 +74,7 @@ export default class AppBarPage extends React.Component {
           },
           {
             name: 'showMenuIconButton',
-            type: 'boolean',
+            type: 'bool',
             header: 'default: true',
             desc: 'Determines whether or not to display the Menu icon next to ' +
                   'the title. Setting this prop to false will hide the icon.',
@@ -81,7 +87,7 @@ export default class AppBarPage extends React.Component {
           },
           {
             name: 'zDepth',
-            type: 'number',
+            type: 'oneOf [0,1,2,3,4,5]',
             header: 'default: 1',
             desc: 'The zDepth of the app bar. The shadow of the app bar is also ' +
                   'dependent on this property.',
@@ -101,6 +107,12 @@ export default class AppBarPage extends React.Component {
             name: 'onRightIconButtonTouchTap',
             header: 'AppBar.onRightIconButtonTouchTap(e)',
             desc: 'Callback function for when the right icon is selected via ' +
+                  'a touch tap.',
+          },
+          {
+            name: 'onTitleTouchTap',
+            header: 'AppBar.onTitleTouchTap(e)',
+            desc: 'Callback function for when the title text is selected via ' +
                   'a touch tap.',
           },
         ],
@@ -130,7 +142,7 @@ export default class AppBarPage extends React.Component {
             iconClassNameRight="muidocs-icon-navigation-expand-more" />
           <br />
           <AppBar
-            title="Title"
+            title={<span style={styles.title} onTouchTap={this._onTouchTap}>Title</span>}
             iconElementLeft={<IconButton><NavigationClose /></IconButton>}
             iconElementRight={<FlatButton label="Save" />} />
           <br />
@@ -149,6 +161,10 @@ export default class AppBarPage extends React.Component {
         </CodeExample>
       </ComponentDoc>
     );
+  }
+
+  _onTouchTap() {
+    alert('onTouchTap triggered on the title component');
   }
 
 }

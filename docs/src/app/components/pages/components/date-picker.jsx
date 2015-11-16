@@ -31,9 +31,11 @@ export default class DatePickerPage extends React.Component {
         infoArray: [
           {
             name: 'container',
-            type: 'one of: dialog, container',
+            type: 'one of: dialog, inline',
             header: 'default: dialog',
-            desc: 'The date pickers container type',
+            desc: 'Used to control how the DatePicker will be displayed when a user tries to set ' +
+            'a date. `dialog` (default) displays the DatePicker as a dialog with a modal. `inline` '+
+            'displays the DatePicker below the input field (similar to auto complete)',
           },
           {
             name: 'DateTimeFormat',
@@ -64,7 +66,7 @@ export default class DatePickerPage extends React.Component {
           },
           {
             name: 'defaultDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'This is the initial date value of the component. If either `value` or `valueLink` ' +
             'is provided they will override this prop with `value` taking precedence.',
@@ -96,21 +98,21 @@ export default class DatePickerPage extends React.Component {
           },
           {
             name: 'maxDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'The ending of a range of valid dates. The range includes the endDate. ' +
               'The default value is current date + 100 years.',
           },
           {
             name: 'minDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'The beginning of a range of valid dates. The range includes the startDate. ' +
               'The default value is current date - 100 years.',
           },
           {
             name: 'mode',
-            type: 'one of: portrait, landscape',
+            type: 'oneOf ["portrait", "landscape"]',
             header: 'default: portrait',
             desc: 'Tells the component to display the picker in portrait or landscape mode.',
           },
@@ -167,7 +169,7 @@ export default class DatePickerPage extends React.Component {
         infoArray: [
           {
             name: 'onChange',
-            header: 'function(nill, date)',
+            header: 'function(null, date)',
             desc: 'Callback function that is fired when the date value ' +
             'changes. Since there is no particular event associated with ' +
             'the change the first argument will always be null and the second ' +
