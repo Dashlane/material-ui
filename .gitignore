@@ -4,6 +4,8 @@ coverage
 
 # Exclude IDE project folders
 .idea
+*.sublime-project
+*.sublime-workspace
 
 # OS files
 .DS_STORE

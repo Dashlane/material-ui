@@ -1,16 +1,19 @@
-const React = require('react');
+import React from 'react';
+import warning from 'warning';
 
-module.exports = (customTheme) => {
+export default (customTheme) => {
+
+  warning(false, 'ThemeDecorator is deprecated, please use MuiThemeProvider instead.');
 
   return function(Component) {
 
     return React.createClass({
 
-      childContextTypes : {
+      childContextTypes: {
         muiTheme: React.PropTypes.object,
       },
 
-      getChildContext () {
+      getChildContext() {
         return {
           muiTheme: customTheme,
         };
@@ -22,4 +25,4 @@ module.exports = (customTheme) => {
     });
 
   };
-}
+};
