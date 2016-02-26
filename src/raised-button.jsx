@@ -47,6 +47,9 @@ function getStyles(props, state) {
     labelColor = raisedButton.secondaryTextColor;
   }
 
+  const overlayBackgroundColor = props.backgroundColor
+        || (state.hovered && !disabled && ColorManipulator.fade(labelColor, amount));
+
   return {
     root: {
       display: 'inline-block',
@@ -80,7 +83,7 @@ function getStyles(props, state) {
       color: labelColor,
     },
     overlay: {
-      backgroundColor: state.hovered && !disabled && ColorManipulator.fade(labelColor, amount),
+      backgroundColor: overlayBackgroundColor,
       transition: Transitions.easeOut(),
       top: 0,
     },
