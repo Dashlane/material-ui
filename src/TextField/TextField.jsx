@@ -375,7 +375,7 @@ const TextField = React.createClass({
   },
 
   _handleTextAreaHeightChange(event, height) {
-    let newHeight = (height / this._getFontSize()) + 1.5;
+    let newHeight = (height / getFontSize(this.props)) + 1.5;
     if (this.props.floatingLabelText) newHeight += 1.5;
     ReactDOM.findDOMNode(this).style.height = `${newHeight}em`;
   },
