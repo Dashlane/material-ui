@@ -27,10 +27,10 @@ const getStyles = (props, state) => {
 
   const styles = {
     root: {
-      fontSize: 16,
-      lineHeight: '24px',
-      width: props.fullWidth ? '100%' : 256,
-      height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
+      fontSize: getFontSize(props),
+      lineHeight: '1.5em',
+      width: props.fullWidth ? '100%' : '16em',
+      height: (props.rows - 1) * 1.5 + (props.floatingLabelText ? 4.5 : 3) + 'em',
       display: 'inline-block',
       position: 'relative',
       backgroundColor: backgroundColor,
@@ -39,9 +39,9 @@ const getStyles = (props, state) => {
     },
     error: {
       position: 'relative',
-      bottom: 2,
-      fontSize: 12,
-      lineHeight: '12px',
+      bottom: '0.417em',
+      fontSize: '0.75em',
+      lineHeight: '1em',
       color: errorColor,
       transition: Transitions.easeOut(),
     },
@@ -67,8 +67,8 @@ const getStyles = (props, state) => {
   Object.assign(styles.error, props.errorStyle);
 
   Object.assign(styles.textarea, styles.input, {
-    marginTop: props.floatingLabelText ? 36 : 12,
-    marginBottom: props.floatingLabelText ? -36 : -12,
+    marginTop: props.floatingLabelText ? '2.25em' : '0.75em',
+    marginBottom: props.floatingLabelText ? '-2.25em' : '-0.75em',
     boxSizing: 'border-box',
     font: 'inherit',
   });
@@ -85,7 +85,7 @@ const getStyles = (props, state) => {
     styles.input.boxSizing = 'border-box';
 
     if (!props.multiLine) {
-      styles.input.marginTop = 14;
+      styles.input.marginTop = '0.875em';
     }
 
     if (state.errorText) {
@@ -101,6 +101,10 @@ const getStyles = (props, state) => {
 
   return styles;
 };
+
+function getFontSize(props) {
+  return props.style && props.style.fontSize ? props.style.fontSize : 16;
+}
 
 /**
  * Check if a value is valid to be displayed inside an input.
@@ -371,9 +375,9 @@ const TextField = React.createClass({
   },
 
   _handleTextAreaHeightChange(event, height) {
-    let newHeight = height + 24;
-    if (this.props.floatingLabelText) newHeight += 24;
-    ReactDOM.findDOMNode(this).style.height = `${newHeight}px`;
+    let newHeight = (height / this._getFontSize()) + 1.5;
+    if (this.props.floatingLabelText) newHeight += 1.5;
+    ReactDOM.findDOMNode(this).style.height = `${newHeight}em`;
   },
 
   _isControlled() {

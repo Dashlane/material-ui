@@ -87,11 +87,12 @@ const TextFieldUnderline = (props) => {
       border: 'none',
       borderBottom: 'solid 1px',
       borderColor: borderColor,
-      bottom: 8,
+      bottom: '0.5em',
       boxSizing: 'content-box',
       margin: 0,
       position: 'absolute',
       width: '100%',
+      height: 0,
     },
     disabled: {
       borderBottom: 'dotted 2px',

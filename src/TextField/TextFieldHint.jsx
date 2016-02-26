@@ -47,10 +47,11 @@ const TextFieldHint = (props) => {
   const styles = {
     root: {
       position: 'absolute',
+      lineHeight: '1.375em',
       opacity: show ? 1 : 0,
       color: hintColor,
       transition: Transitions.easeOut(),
-      bottom: 12,
+      bottom: '0.545em',
     },
   };
 
