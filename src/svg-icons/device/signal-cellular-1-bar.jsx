@@ -1,19 +1,13 @@
-const React = require('react');
-const PureRenderMixin = require('react-addons-pure-render-mixin');
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const DeviceSignalCellular1Bar = React.createClass({
+let DeviceSignalCellular1Bar = (props) => (
+  <SvgIcon {...props}>
+    <path fillOpacity=".3" d="M2 22h20V2z"/><path d="M12 12L2 22h10z"/>
+  </SvgIcon>
+);
+DeviceSignalCellular1Bar = pure(DeviceSignalCellular1Bar)
+DeviceSignalCellular1Bar.displayName = 'DeviceSignalCellular1Bar';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path fill-opacity=".3" d="M2 22h20V2z"/><path d="M12 12L2 22h10z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = DeviceSignalCellular1Bar;
+export default DeviceSignalCellular1Bar;

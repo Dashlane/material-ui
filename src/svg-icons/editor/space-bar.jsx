@@ -1,19 +1,13 @@
-const React = require('react');
-const PureRenderMixin = require('react-addons-pure-render-mixin');
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const EditorSpaceBar = React.createClass({
+let EditorSpaceBar = (props) => (
+  <SvgIcon {...props}>
+    <path d="M18 9v4H6V9H4v6h16V9z"/>
+  </SvgIcon>
+);
+EditorSpaceBar = pure(EditorSpaceBar)
+EditorSpaceBar.displayName = 'EditorSpaceBar';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M18 9v4H6V9H4v6h16V9z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = EditorSpaceBar;
+export default EditorSpaceBar;
