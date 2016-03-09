@@ -143,6 +143,11 @@ const TextField = React.createClass({
     errorText: React.PropTypes.node,
 
     /**
+     * If true, the floating label will float even when there is no value.
+     */
+    floatingLabelAlwaysFloating: React.PropTypes.bool,
+
+    /**
      * The style object to use to override floating label styles.
      */
     floatingLabelStyle: React.PropTypes.object,
@@ -404,6 +409,7 @@ const TextField = React.createClass({
       disabled,
       errorStyle,
       errorText,
+      floatingLabelAlwaysFloating,
       floatingLabelText,
       fullWidth,
       hintText,
@@ -443,7 +449,7 @@ const TextField = React.createClass({
         muiTheme={this.state.muiTheme}
         style={Object.assign(styles.floatingLabel, this.props.floatingLabelStyle)}
         htmlFor={inputId}
-        shrink={this.state.hasValue || this.state.isFocused}
+        shrink={this.state.hasValue || this.state.isFocused || floatingLabelAlwaysFloating}
         disabled={disabled}
       >
         {floatingLabelText}
