@@ -186,7 +186,6 @@ const Calendar = React.createClass({
 
   _handleWindowKeyDown(event) {
     if (this.props.open) {
-
       switch (keycode(event)) {
         case 'up':
           if (event.altKey && event.shiftKey) {
@@ -232,7 +231,6 @@ const Calendar = React.createClass({
   },
 
   render() {
-
     const {
       prepareStyles,
     } = this.state.muiTheme;
@@ -309,6 +307,7 @@ const Calendar = React.createClass({
           handleYearClick={this._handleYearClick}
           monthDaySelected={this.state.displayMonthDay}
           mode={this.props.mode}
+          muiTheme={this.state.muiTheme}
           weekCount={weekCount}
         />
         {this.state.displayMonthDay &&

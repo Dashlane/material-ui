@@ -94,7 +94,7 @@ const Master = React.createClass({
         margin: '0 auto',
         padding: 0,
         color: lightWhite,
-        maxWidth: 335,
+        maxWidth: 356,
       },
       iconButton: {
         color: darkWhite,
@@ -189,8 +189,7 @@ const Master = React.createClass({
                 onChangeMuiTheme: this.handleChangeMuiTheme,
               })}
             </div>
-          </div>
-          :
+          </div> :
           children
         }
         <AppLeftNav
@@ -204,7 +203,7 @@ const Master = React.createClass({
         <FullWidthSection style={styles.footer}>
           <p style={prepareStyles(styles.p)}>
             {'Hand crafted with love by the engineers at '}
-            <a style={styles.a} href="http://call-em-all.com">
+            <a style={styles.a} href="http://www.call-em-all.com/Careers">
               Call-Em-All
             </a>
             {' and our awesome '}

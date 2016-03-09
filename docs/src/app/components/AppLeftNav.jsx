@@ -4,6 +4,8 @@ import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 import Divider from 'material-ui/lib/divider';
 import Subheader from 'material-ui/lib/Subheader';
+import DropDownMenu from 'material-ui/lib/DropDownMenu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
 import {SelectableContainerEnhance} from 'material-ui/lib/hoc/selectable-enhance';
 import {
   Spacing,
@@ -30,6 +32,59 @@ const AppLeftNav = React.createClass({
     router: React.PropTypes.object.isRequired,
   },
 
+  getInitialState: () => {
+    return ({
+      muiVersions: [],
+    });
+  },
+
+  componentDidMount: function() {
+    const self = this;
+    const url = '/versions.json';
+    const request = new XMLHttpRequest();
+
+    request.onreadystatechange = function() {
+      if (request.readyState === 4 && request.status === 200) {
+        self.setState({
+          muiVersions: JSON.parse(request.responseText),
+          version: JSON.parse(request.responseText)[0],
+        });
+      }
+    };
+
+    request.open('GET', url, true);
+    request.send();
+  },
+
+  firstNonPreReleaseVersion: function() {
+    let version;
+    for (let i = 0; i < this.state.muiVersions.length; i++) {
+      version = this.state.muiVersions[i];
+      // If the version doesn't contain '-' and isn't 'HEAD'
+      if (!/-/.test(version) && version !== 'HEAD') {
+        break;
+      }
+    }
+    return version;
+  },
+
+  handleVersionChange: function(event, index, value) {
+    if (value === this.firstNonPreReleaseVersion()) {
+      window.location = 'http://www.material-ui.com/';
+    } else {
+      window.location = `http://www.material-ui.com/${value}`;
+    }
+  },
+
+  currentVersion: function() {
+    if (window.location.hostname === 'localhost') return this.state.muiVersions[0];
+    if (window.location.pathname === '/') {
+      return this.firstNonPreReleaseVersion();
+    } else {
+      return window.location.pathname.replace(/\//g, '');
+    }
+  },
+
   handleRequestChangeLink(event, value) {
     window.location = value;
   },
@@ -39,19 +94,21 @@ const AppLeftNav = React.createClass({
     this.props.onRequestChangeLeftNav(false);
   },
 
-  getStyles() {
-    return {
-      logo: {
-        cursor: 'pointer',
-        fontSize: 24,
-        color: Typography.textFullWhite,
-        lineHeight: `${Spacing.desktopKeylineIncrement}px`,
-        fontWeight: Typography.fontWeightLight,
-        backgroundColor: cyan500,
-        paddingLeft: Spacing.desktopGutter,
-        marginBottom: 8,
-      },
-    };
+  styles: {
+    logo: {
+      cursor: 'pointer',
+      fontSize: 24,
+      color: Typography.textFullWhite,
+      lineHeight: `${Spacing.desktopKeylineIncrement}px`,
+      fontWeight: Typography.fontWeightLight,
+      backgroundColor: cyan500,
+      paddingLeft: Spacing.desktopGutter,
+      marginBottom: 8,
+    },
+    version: {
+      paddingLeft: Spacing.desktopGutterLess,
+      fontSize: 16,
+    },
   },
 
   render() {
@@ -64,12 +121,6 @@ const AppLeftNav = React.createClass({
       style,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.context.muiTheme;
-
-    const styles = this.getStyles();
-
     return (
       <LeftNav
         style={style}
@@ -78,9 +129,26 @@ const AppLeftNav = React.createClass({
         onRequestChange={onRequestChangeLeftNav}
         containerStyle={{zIndex: zIndex.leftNav - 100}}
       >
-        <div style={prepareStyles(styles.logo)} onTouchTap={this.handleTouchTapHeader}>
+        <div style={this.styles.logo} onTouchTap={this.handleTouchTapHeader}>
           Material-UI
         </div>
+
+        <span style={this.styles.version}>Version:</span>
+        <DropDownMenu
+          value={this.currentVersion()}
+          onChange={this.handleVersionChange}
+          maxHeight={300}
+          style={{width: 181}}
+        >
+          {this.state.muiVersions.map((version) => (
+            <MenuItem
+              key={version}
+              value={version}
+              primaryText={version}
+            />
+          ))}
+        </DropDownMenu>
+
         <SelectableList
           valueLink={{value: location.pathname, requestChange: onRequestChangeList}}
         >
@@ -169,6 +237,7 @@ const AppLeftNav = React.createClass({
                 ]}
               />,
               <ListItem primaryText="Snackbar" value="/components/snackbar" />,
+              <ListItem primaryText="Stepper" value="/components/stepper" />,
               <ListItem primaryText="Subheader" value="/components/subheader" />,
               <ListItem primaryText="Table" value="/components/table" />,
               <ListItem primaryText="Tabs" value="/components/tabs" />,

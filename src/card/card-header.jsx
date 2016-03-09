@@ -7,15 +7,17 @@ function getStyles(props, state) {
 
   return {
     root: {
-      height: 72,
       padding: 16,
       fontWeight: card.fontWeight,
       boxSizing: 'border-box',
       position: 'relative',
+      whiteSpace: 'nowrap',
     },
     text: {
       display: 'inline-block',
       verticalAlign: 'top',
+      whiteSpace: 'normal',
+      paddingRight: '90px',
     },
     avatar: {
       marginRight: 16,
@@ -36,22 +38,69 @@ function getStyles(props, state) {
 const CardHeader = React.createClass({
 
   propTypes: {
+    /**
+     * If true, a click on this card component expands the card.
+     */
     actAsExpander: React.PropTypes.bool,
+
+    /**
+     * This is the [Avatar](/#/components/avatar) element to be displayed on the Card Header.
+     */
     avatar: React.PropTypes.node,
+
+    /**
+     * Can be used to render elements inside the Card Header.
+     */
     children: React.PropTypes.node,
+
+    /**
+     * If true, this card component is expandable.
+     */
     expandable: React.PropTypes.bool,
+
+    /**
+     * If true, this card component will include a button to expand the card.
+     */
     showExpandableButton: React.PropTypes.bool,
 
     /**
      * Override the inline-styles of the root element.
      */
     style: React.PropTypes.object,
+
+    /**
+     * Can be used to render a subtitle in Card Header.
+     */
     subtitle: React.PropTypes.node,
+
+    /**
+     * Override the subtitle color.
+     */
     subtitleColor: React.PropTypes.string,
+
+    /**
+     * Override the inline-styles of the subtitle.
+     */
     subtitleStyle: React.PropTypes.object,
+
+    /**
+     * Override the inline-styles of the text.
+     */
     textStyle: React.PropTypes.object,
+
+    /**
+     * Can be used to render a title in Card Header.
+     */
     title: React.PropTypes.node,
+
+    /**
+     * Override the title color.
+     */
     titleColor: React.PropTypes.string,
+
+    /**
+     * Override the inline-styles of the title.
+     */
     titleStyle: React.PropTypes.object,
   },
 
@@ -107,12 +156,18 @@ const CardHeader = React.createClass({
       avatar = <Avatar src={this.props.avatar} style={styles.avatar} />;
     }
 
+    const {
+      title,
+      subtitle,
+      ...other,
+    } = this.props;
+
     return (
-      <div {...this.props} style={prepareStyles(rootStyle)}>
+      <div {...other} style={prepareStyles(rootStyle)}>
         {avatar}
         <div style={prepareStyles(textStyle)}>
-          <span style={prepareStyles(titleStyle)}>{this.props.title}</span>
-          <span style={prepareStyles(subtitleStyle)}>{this.props.subtitle}</span>
+          <span style={prepareStyles(titleStyle)}>{title}</span>
+          <span style={prepareStyles(subtitleStyle)}>{subtitle}</span>
         </div>
         {this.props.children}
       </div>

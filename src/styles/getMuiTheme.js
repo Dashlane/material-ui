@@ -7,8 +7,8 @@ import compose from 'lodash.flowright';
 import Typography from '../styles/typography';
 import {
 red500,
-grey400, grey600, grey700,
-transparent, lightWhite, white, darkWhite, lightBlack,
+grey400, grey500, grey600, grey700,
+transparent, lightWhite, white, darkWhite, lightBlack, black,
 } from './colors';
 
 /**
@@ -106,17 +106,17 @@ export default function getMuiTheme(muiTheme, ...more) {
       buttonFilterColor: '#999999',
       disabledTextColor: ColorManipulator.fade(palette.textColor, 0.3),
       textColor: palette.textColor,
-      primaryTextColor: palette.accent1Color,
-      secondaryTextColor: palette.primary1Color,
+      primaryTextColor: palette.primary1Color,
+      secondaryTextColor: palette.accent1Color,
       fontSize: Typography.fontStyleButtonFontSize,
       fontWeight: Typography.fontWeightMedium,
     },
     floatingActionButton: {
       buttonSize: 56,
       miniSize: 40,
-      color: palette.accent1Color,
+      color: palette.primary1Color,
       iconColor: palette.alternateTextColor,
-      secondaryColor: palette.primary1Color,
+      secondaryColor: palette.accent1Color,
       secondaryIconColor: palette.alternateTextColor,
       disabledTextColor: palette.disabledColor,
       disabledColor: ColorManipulator.luminance(palette.canvasColor) > 0.5 ?
@@ -186,9 +186,9 @@ export default function getMuiTheme(muiTheme, ...more) {
     raisedButton: {
       color: palette.alternateTextColor,
       textColor: palette.textColor,
-      primaryColor: palette.accent1Color,
+      primaryColor: palette.primary1Color,
       primaryTextColor: palette.alternateTextColor,
-      secondaryColor: palette.primary1Color,
+      secondaryColor: palette.accent1Color,
       secondaryTextColor: palette.alternateTextColor,
       disabledColor: ColorManipulator.darken(palette.alternateTextColor, 0.1),
       disabledTextColor: ColorManipulator.fade(palette.textColor, 0.3),
@@ -221,6 +221,20 @@ export default function getMuiTheme(muiTheme, ...more) {
     subheader: {
       color: ColorManipulator.fade(palette.textColor, 0.54),
       fontWeight: Typography.fontWeightMedium,
+    },
+    stepper: {
+      activeAvatarColor: palette.primary1Color,
+      hoveredAvatarColor: grey700,
+      inactiveAvatarColor: grey500,
+
+      inactiveTextColor: ColorManipulator.fade(black, 0.26),
+      activeTextColor: ColorManipulator.fade(black, 0.87),
+      hoveredTextColor: grey600,
+
+      hoveredHeaderColor: ColorManipulator.fade(black, 0.06),
+
+      connectorLineColor: grey400,
+      avatarSize: 24,
     },
     table: {
       backgroundColor: palette.canvasColor,

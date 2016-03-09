@@ -25,6 +25,7 @@ const MenuItem = React.createClass({
     children: React.PropTypes.node,
 
     /**
+     * @ignore
      * Indicates if the menu should render with compact desktop styles.
      */
     desktop: React.PropTypes.bool,
@@ -232,10 +233,16 @@ const MenuItem = React.createClass({
         paddingRight: sidePadding,
         paddingBottom: 0,
         paddingTop: 0,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignContent: 'space-between',
       },
 
       secondaryText: {
-        float: 'right',
+        order: 2,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
       },
 
       leftIconDesktop: {

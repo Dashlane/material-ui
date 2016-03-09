@@ -1,6 +1,6 @@
 {
   "name": "material-ui-docs",
-  "version": "0.14.4",
+  "version": "0.15.0-alpha.1",
   "description": "Documentation site for material-ui",
   "repository": {
     "type": "git",
@@ -15,6 +15,7 @@
     "browser:development": "webpack-dev-server --config webpack-dev-server.config.js --progress --colors --inline",
     "browser:build": "NODE_ENV=docs-production webpack --config webpack-production.config.js --progress --colors --profile",
     "browser:prd": "NODE_ENV=docs-production webpack-dev-server --config webpack-production.config.js --progress --colors",
+    "gh-pages:build": "node ./gh-pages-build.js",
     "native:development": "node_modules/react-native/packager/packager.sh --reset-cache",
     "android:setup-port": "adb reverse tcp:8081 tcp:8081"
   },
@@ -26,7 +27,7 @@
     "babel-eslint": "^5.0.0",
     "css-loader": "^0.23.0",
     "doctrine": "^1.1.0",
-    "eslint": "^2.2.0",
+    "eslint": "~2.2.0",
     "eslint-plugin-react": "^4.0.0",
     "highlight.js": "^9.0.0",
     "history": "^2.0.0",
