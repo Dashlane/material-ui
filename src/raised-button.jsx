@@ -33,8 +33,8 @@ function getStyles(props, state) {
 
   const amount = (primary || secondary) ? 0.4 : 0.08;
 
-  let backgroundColor = raisedButton.color;
-  let labelColor = raisedButton.textColor;
+  let backgroundColor = props.backgroundColor || raisedButton.color;
+  let labelColor = props.labelColor || raisedButton.textColor;
 
   if (disabled) {
     backgroundColor = disabledBackgroundColor || raisedButton.disabledColor;
@@ -47,8 +47,7 @@ function getStyles(props, state) {
     labelColor = raisedButton.secondaryTextColor;
   }
 
-  const overlayBackgroundColor = props.backgroundColor
-        || (state.hovered && !disabled && ColorManipulator.fade(labelColor, amount));
+  const overlayBackgroundColor = (state.hovered && !disabled && ColorManipulator.fade(labelColor, amount));
 
   return {
     root: {
