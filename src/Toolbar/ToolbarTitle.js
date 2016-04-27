@@ -1,11 +1,10 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
-function getStyles(props, state) {
+function getStyles(props, context) {
   const {
     baseTheme,
     toolbar,
-  } = state.muiTheme;
+  } = context.muiTheme;
 
   return {
     root: {
@@ -20,50 +19,27 @@ function getStyles(props, state) {
   };
 }
 
-const ToolbarTitle = React.createClass({
+class ToolbarTitle extends Component {
+  static muiName = 'ToolbarTitle';
 
-  propTypes: {
+  static propTypes = {
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * The text to be displayed.
      */
-    text: React.PropTypes.string,
-  },
+    text: PropTypes.string,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -73,19 +49,15 @@ const ToolbarTitle = React.createClass({
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
 
     return (
       <span {...other} className={className} style={prepareStyles(Object.assign({}, styles.root, style))}>
         {text}
       </span>
     );
-  },
-
-});
+  }
+}
 
 export default ToolbarTitle;

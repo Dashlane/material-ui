@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createClass, PropTypes} from 'react';
 import {Link} from 'react-router';
 import styleResizable from 'material-ui/utils/styleResizable';
 import spacing from 'material-ui/styles/spacing';
@@ -7,14 +7,14 @@ import typography from 'material-ui/styles/typography';
 import {grey200} from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
 
-const HomeFeature = React.createClass({
+const HomeFeature = createClass({
 
   propTypes: {
-    firstChild: React.PropTypes.bool,
-    heading: React.PropTypes.string,
-    img: React.PropTypes.string,
-    lastChild: React.PropTypes.bool,
-    route: React.PropTypes.string,
+    firstChild: PropTypes.bool,
+    heading: PropTypes.string,
+    img: PropTypes.string,
+    lastChild: PropTypes.bool,
+    route: PropTypes.string,
   },
 
   mixins: [styleResizable],
@@ -48,8 +48,7 @@ const HomeFeature = React.createClass({
         marginBottom: 0,
       },
       image: {
-        //Not sure why this is needed but it fixes a display
-        //issue in chrome
+        // Not sure why this is needed but it fixes a display issue in chrome
         marginBottom: -6,
       },
       heading: {
@@ -90,13 +89,13 @@ const HomeFeature = React.createClass({
     return styles;
   },
 
-  _onMouseEnter() {
+  handleMouseEnter() {
     this.setState({
       zDepth: 4,
     });
   },
 
-  _onMouseLeave() {
+  handleMouseLeave() {
     this.setState({
       zDepth: 0,
     });
@@ -108,11 +107,12 @@ const HomeFeature = React.createClass({
     return (
       <Paper
         zDepth={this.state.zDepth}
-        onMouseEnter={this._onMouseEnter}
-        onMouseLeave={this._onMouseLeave}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
         style={Object.assign(
           styles.root,
-          this.props.lastChild && styles.rootWhenLastChild)}
+          this.props.lastChild && styles.rootWhenLastChild
+        )}
       >
         <h3 style={styles.heading}>{this.props.heading}</h3>
         <Link to={this.props.route}>

@@ -1,5 +1,4 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
 function getStyles() {
   return {
@@ -13,67 +12,37 @@ function getStyles() {
   };
 }
 
-const CardActions = React.createClass({
-
-  propTypes: {
+class CardActions extends Component {
+  static propTypes = {
     /**
      * If true, a click on this card component expands the card.
      */
-    actAsExpander: React.PropTypes.bool,
-
+    actAsExpander: PropTypes.bool,
     /**
      * Can be used to render elements inside the Card Action.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * If true, this card component is expandable.
      */
-    expandable: React.PropTypes.bool,
-
+    expandable: PropTypes.bool,
     /**
      * If true, this card component will include a button to expand the card.
      */
-    showExpandableButton: React.PropTypes.bool,
-
+    showExpandableButton: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
 
     const children = React.Children.map(this.props.children, (child) => {
       if (React.isValidElement(child)) {
@@ -88,7 +57,7 @@ const CardActions = React.createClass({
         {children}
       </div>
     );
-  },
-});
+  }
+}
 
 export default CardActions;

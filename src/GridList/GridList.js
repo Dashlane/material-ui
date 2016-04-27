@@ -1,5 +1,4 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
 function getStyles(props) {
   return {
@@ -15,68 +14,39 @@ function getStyles(props) {
   };
 }
 
-const GridList = React.createClass({
-
-  propTypes: {
+class GridList extends Component {
+  static propTypes = {
     /**
      * Number of px for one cell height.
      */
-    cellHeight: React.PropTypes.number,
-
+    cellHeight: PropTypes.number,
     /**
      * Grid Tiles that will be in Grid List.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * Number of columns.
      */
-    cols: React.PropTypes.number,
-
+    cols: PropTypes.number,
     /**
      * Number of px for the padding/spacing between items.
      */
-    padding: React.PropTypes.number,
-
+    padding: PropTypes.number,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    cols: 2,
+    padding: 4,
+    cellHeight: 180,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getDefaultProps() {
-    return {
-      cols: 2,
-      padding: 4,
-      cellHeight: 180,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -88,16 +58,12 @@ const GridList = React.createClass({
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
-
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
     const mergedRootStyles = Object.assign(styles.root, style);
 
     const wrappedChildren = React.Children.map(children, (currentChild) => {
-      if (React.isValidElement(currentChild) && currentChild.type.displayName === 'Subheader') {
+      if (React.isValidElement(currentChild) && currentChild.type.muiName === 'Subheader') {
         return currentChild;
       }
       const childCols = currentChild.props.cols || 1;
@@ -115,7 +81,7 @@ const GridList = React.createClass({
         {wrappedChildren}
       </div>
     );
-  },
-});
+  }
+}
 
 export default GridList;

@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import TextField from '../TextField';
 import DropDownMenu from '../DropDownMenu';
-import getMuiTheme from '../styles/getMuiTheme';
 
 function getStyles(props) {
   return {
@@ -19,153 +18,113 @@ function getStyles(props) {
   };
 }
 
-const SelectField = React.createClass({
-
-  propTypes: {
+class SelectField extends Component {
+  static propTypes = {
     /**
-     * The width will automatically be set according to the
-     * items inside the menu. To control this width in css
-     * instead, set this prop to `false`.
+     * If true, the width will automatically be set according to the
+     * items inside the menu.
+     * To control this width in css instead, leave this prop to `false`.
      */
-    autoWidth: React.PropTypes.bool,
-
+    autoWidth: PropTypes.bool,
     /**
      * The `MenuItem` elements to populate the `Menu` with.
      * If the MenuItems have the prop `label` that value will
      * be used to render the representation of that
      * item within the field.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * Disables the select field if set to true.
      */
-    disabled: React.PropTypes.bool,
-
+    disabled: PropTypes.bool,
     /**
      * The style object to use to override error styles.
      */
-    errorStyle: React.PropTypes.object,
-
+    errorStyle: PropTypes.object,
     /**
      * The error content to display.
      */
-    errorText: React.PropTypes.node,
-
+    errorText: PropTypes.node,
     /**
      * The style object to use to override floating label styles.
      */
-    floatingLabelStyle: React.PropTypes.object,
-
+    floatingLabelStyle: PropTypes.object,
     /**
      * The content to use for the floating label element.
      */
-    floatingLabelText: React.PropTypes.node,
-
+    floatingLabelText: PropTypes.node,
     /**
      * If true, the field receives the property width 100%.
      */
-    fullWidth: React.PropTypes.bool,
-
+    fullWidth: PropTypes.bool,
     /**
      * The style object to use to override hint styles.
      */
-    hintStyle: React.PropTypes.object,
-
+    hintStyle: PropTypes.object,
     /**
      * The hint content to display.
      */
-    hintText: React.PropTypes.node,
-
+    hintText: PropTypes.node,
     /**
      * Overrides the styles of the icon element.
      */
-    iconStyle: React.PropTypes.object,
-
+    iconStyle: PropTypes.object,
+    /**
+     * The id prop for the text field.
+     */
+    id: PropTypes.string,
     /**
      * Overrides the styles of label when the `SelectField` is inactive.
      */
-    labelStyle: React.PropTypes.object,
-
+    labelStyle: PropTypes.object,
     /**
      * Callback function that is fired when the `SelectField` loses focus.
      */
-    onBlur: React.PropTypes.func,
-
+    onBlur: PropTypes.func,
     /**
      * Callback function that is fired when the value changes.
      */
-    onChange: React.PropTypes.func,
-
+    onChange: PropTypes.func,
     /**
      * Callback function that is fired when the `SelectField` gains focus.
      */
-    onFocus: React.PropTypes.func,
-
+    onFocus: PropTypes.func,
     /**
      * The style object to use to override the `DropDownMenu`.
      */
-    selectFieldRoot: React.PropTypes.object, // Must be changed!
+    selectFieldRoot: PropTypes.object, // Must be changed!
 
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * Override the inline-styles of the underline element when disabled.
      */
-    underlineDisabledStyle: React.PropTypes.object,
-
+    underlineDisabledStyle: PropTypes.object,
     /**
      * Override the inline-styles of the underline element when focused.
      */
-    underlineFocusStyle: React.PropTypes.object,
-
+    underlineFocusStyle: PropTypes.object,
     /**
      * Overrides the styles of the underline element.
      */
-    underlineStyle: React.PropTypes.object,
-
+    underlineStyle: PropTypes.object,
     /**
      * The value that is currently selected.
      */
-    value: React.PropTypes.any,
-  },
+    value: PropTypes.any,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    autoWidth: false,
+    disabled: false,
+    fullWidth: false,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getDefaultProps() {
-    return {
-      autoWidth: false,
-      disabled: false,
-      fullWidth: false,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -174,6 +133,7 @@ const SelectField = React.createClass({
       style,
       labelStyle,
       iconStyle,
+      id,
       underlineDisabledStyle,
       underlineFocusStyle,
       underlineStyle,
@@ -193,7 +153,7 @@ const SelectField = React.createClass({
       ...other,
     } = this.props;
 
-    const styles = getStyles(this.props, this.state);
+    const styles = getStyles(this.props, this.context);
 
     return (
       <TextField
@@ -208,6 +168,7 @@ const SelectField = React.createClass({
         errorStyle={errorStyle}
         onFocus={onFocus}
         onBlur={onBlur}
+        id={id}
         underlineDisabledStyle={underlineDisabledStyle}
         underlineFocusStyle={underlineFocusStyle}
       >
@@ -226,7 +187,7 @@ const SelectField = React.createClass({
         </DropDownMenu>
       </TextField>
     );
-  },
-});
+  }
+}
 
 export default SelectField;

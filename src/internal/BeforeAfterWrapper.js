@@ -1,5 +1,4 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
 /**
  *  BeforeAfterWrapper
@@ -41,69 +40,41 @@ const styles = {
   },
 };
 
-const BeforeAfterWrapper = React.createClass({
-
-  propTypes: {
-    afterElementType: React.PropTypes.string,
-    afterStyle: React.PropTypes.object,
-    beforeElementType: React.PropTypes.string,
-    beforeStyle: React.PropTypes.object,
-    children: React.PropTypes.node,
-    elementType: React.PropTypes.string,
-
+class BeforeAfterWrapper extends Component {
+  static propTypes = {
+    afterElementType: PropTypes.string,
+    afterStyle: PropTypes.object,
+    beforeElementType: PropTypes.string,
+    beforeStyle: PropTypes.object,
+    children: PropTypes.node,
+    elementType: PropTypes.string,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    beforeElementType: 'div',
+    afterElementType: 'div',
+    elementType: 'div',
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getDefaultProps() {
-    return {
-      beforeElementType: 'div',
-      afterElementType: 'div',
-      elementType: 'div',
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
       beforeStyle,
       afterStyle,
-      beforeElementType,
-      afterElementType,
-      elementType,
+      beforeElementType, // eslint-disable-line no-unused-vars
+      afterElementType, // eslint-disable-line no-unused-vars
+      elementType, // eslint-disable-line no-unused-vars
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
+    const {prepareStyles} = this.context.muiTheme;
 
     let beforeElement;
     let afterElement;
@@ -130,8 +101,7 @@ const BeforeAfterWrapper = React.createClass({
     props.style = prepareStyles(Object.assign({}, this.props.style));
 
     return React.createElement(this.props.elementType, props, children);
-  },
-
-});
+  }
+}
 
 export default BeforeAfterWrapper;

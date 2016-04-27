@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createClass, PropTypes} from 'react';
 import Title from 'react-title-component';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -6,7 +6,7 @@ import spacing from 'material-ui/styles/spacing';
 import styleResizable from 'material-ui/utils/styleResizable';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {darkWhite, lightWhite, grey900} from 'material-ui/styles/colors';
-import AppLeftNav from './AppLeftNav';
+import AppNavDrawer from './AppNavDrawer';
 import FullWidthSection from './FullWidthSection';
 
 const githubButton = (
@@ -17,19 +17,19 @@ const githubButton = (
   />
 );
 
-const Master = React.createClass({
+const Master = createClass({
 
   propTypes: {
-    children: React.PropTypes.node,
-    location: React.PropTypes.object,
+    children: PropTypes.node,
+    location: PropTypes.object,
   },
 
   contextTypes: {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
   },
 
   childContextTypes: {
-    muiTheme: React.PropTypes.object,
+    muiTheme: PropTypes.object,
   },
 
   mixins: [
@@ -39,7 +39,7 @@ const Master = React.createClass({
   getInitialState() {
     return {
       muiTheme: getMuiTheme(),
-      leftNavOpen: false,
+      navDrawerOpen: false,
     };
   },
 
@@ -108,20 +108,20 @@ const Master = React.createClass({
 
   handleTouchTapLeftIconButton() {
     this.setState({
-      leftNavOpen: !this.state.leftNavOpen,
+      navDrawerOpen: !this.state.navDrawerOpen,
     });
   },
 
-  handleChangeRequestLeftNav(open) {
+  handleChangeRequestNavDrawer(open) {
     this.setState({
-      leftNavOpen: open,
+      navDrawerOpen: open,
     });
   },
 
-  handleRequestChangeList(event, value) {
+  handleChangeList(event, value) {
     this.context.router.push(value);
     this.setState({
-      leftNavOpen: false,
+      navDrawerOpen: false,
     });
   },
 
@@ -138,7 +138,7 @@ const Master = React.createClass({
     } = this.props;
 
     let {
-      leftNavOpen,
+      navDrawerOpen,
     } = this.state;
 
     const {
@@ -158,10 +158,10 @@ const Master = React.createClass({
 
     if (this.isDeviceSize(styleResizable.statics.Sizes.LARGE) && title !== '') {
       docked = true;
-      leftNavOpen = true;
+      navDrawerOpen = true;
       showMenuIconButton = false;
 
-      styles.leftNav = {
+      styles.navDrawer = {
         zIndex: styles.appBar.zIndex - 1,
       };
       styles.root.paddingLeft = 256;
@@ -189,13 +189,13 @@ const Master = React.createClass({
           </div> :
           children
         }
-        <AppLeftNav
-          style={styles.leftNav}
+        <AppNavDrawer
+          style={styles.navDrawer}
           location={location}
           docked={docked}
-          onRequestChangeLeftNav={this.handleChangeRequestLeftNav}
-          onRequestChangeList={this.handleRequestChangeList}
-          open={leftNavOpen}
+          onRequestChangeNavDrawer={this.handleChangeRequestNavDrawer}
+          onChangeList={this.handleChangeList}
+          open={navDrawerOpen}
         />
         <FullWidthSection style={styles.footer}>
           <p style={prepareStyles(styles.p)}>

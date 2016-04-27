@@ -1,11 +1,8 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import Tooltip from '../internal/Tooltip';
-import getMuiTheme from '../styles/getMuiTheme';
 
-function getStyles(props, state) {
-  const {
-    tableHeaderColumn,
-  } = state.muiTheme;
+function getStyles(props, context) {
+  const {tableHeaderColumn} = context.muiTheme;
 
   return {
     root: {
@@ -27,110 +24,77 @@ function getStyles(props, state) {
   };
 }
 
-const TableHeaderColumn = React.createClass({
-
-  propTypes: {
-    children: React.PropTypes.node,
-
+class TableHeaderColumn extends Component {
+  static propTypes = {
+    children: PropTypes.node,
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
      * Number to identify the header row. This property
      * is automatically populated when used with TableHeader.
      */
-    columnNumber: React.PropTypes.number,
-
-    /**
-     * Key prop for table header column.
-     */
-    key: React.PropTypes.string,
-
+    columnNumber: PropTypes.number,
     /**
      * @ignore
      * Callback function for click event.
      */
-    onClick: React.PropTypes.func,
-
+    onClick: PropTypes.func,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * The string to supply to the tooltip. If not
      * string is supplied no tooltip will be shown.
      */
-    tooltip: React.PropTypes.string,
-
+    tooltip: PropTypes.string,
     /**
      * Additional styling that can be applied to the tooltip.
      */
-    tooltipStyle: React.PropTypes.object,
-  },
+    tooltipStyle: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  state = {
+    hovered: false,
+  };
 
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-      hovered: false,
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
-
-  _onMouseEnter() {
+  onMouseEnter = () => {
     if (this.props.tooltip !== undefined) this.setState({hovered: true});
-  },
+  };
 
-  _onMouseLeave() {
+  onMouseLeave = () => {
     if (this.props.tooltip !== undefined) this.setState({hovered: false});
-  },
+  };
 
-  _onClick(event) {
+  onClick = (event) => {
     if (this.props.onClick) this.props.onClick(event, this.props.columnNumber);
-  },
+  };
 
   render() {
     const {
       children,
       className,
-      columnNumber,
-      onClick,
+      columnNumber, // eslint-disable-line no-unused-vars
+      onClick, // eslint-disable-line no-unused-vars
       style,
       tooltip,
       tooltipStyle,
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
 
-    const styles = getStyles(this.props, this.state);
     const handlers = {
-      onMouseEnter: this._onMouseEnter,
-      onMouseLeave: this._onMouseLeave,
-      onClick: this._onClick,
+      onMouseEnter: this.onMouseEnter,
+      onMouseLeave: this.onMouseLeave,
+      onClick: this.onClick,
     };
 
     let tooltipNode;
@@ -147,7 +111,6 @@ const TableHeaderColumn = React.createClass({
 
     return (
       <th
-        key={this.props.key}
         className={className}
         style={prepareStyles(Object.assign(styles.root, style))}
         {...handlers}
@@ -157,8 +120,7 @@ const TableHeaderColumn = React.createClass({
         {children}
       </th>
     );
-  },
-
-});
+  }
+}
 
 export default TableHeaderColumn;

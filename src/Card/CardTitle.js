@@ -1,8 +1,7 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
-function getStyles(props, state) {
-  const {card} = state.muiTheme;
+function getStyles(props, context) {
+  const {card} = context.muiTheme;
 
   return {
     root: {
@@ -23,97 +22,63 @@ function getStyles(props, state) {
   };
 }
 
-const CardTitle = React.createClass({
+class CardTitle extends Component {
+  static muiName = 'CardTitle';
 
-  propTypes: {
+  static propTypes = {
     /**
      * If true, a click on this card component expands the card.
      */
-    actAsExpander: React.PropTypes.bool,
-
+    actAsExpander: PropTypes.bool,
     /**
      * Can be used to render elements inside the Card Title.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * If true, this card component is expandable.
      */
-    expandable: React.PropTypes.bool,
-
+    expandable: PropTypes.bool,
     /**
      * If true, this card component will include a button to expand the card.
      */
-    showExpandableButton: React.PropTypes.bool,
-
+    showExpandableButton: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * Can be used to render a subtitle in the Card Title.
      */
-    subtitle: React.PropTypes.node,
-
+    subtitle: PropTypes.node,
     /**
      * Override the subtitle color.
      */
-    subtitleColor: React.PropTypes.string,
-
+    subtitleColor: PropTypes.string,
     /**
      * Override the inline-styles of the subtitle.
      */
-    subtitleStyle: React.PropTypes.object,
-
+    subtitleStyle: PropTypes.object,
     /**
      * Can be used to render a title in the Card Title.
      */
-    title: React.PropTypes.node,
-
+    title: PropTypes.node,
     /**
      * Override the title color.
      */
-    titleColor: React.PropTypes.string,
-
+    titleColor: PropTypes.string,
     /**
      * Override the inline-styles of the title.
      */
-    titleStyle: React.PropTypes.object,
-  },
+    titleStyle: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
     const rootStyle = Object.assign({}, styles.root, this.props.style);
     const titleStyle = Object.assign({}, styles.title, this.props.titleStyle);
     const subtitleStyle = Object.assign({}, styles.subtitle, this.props.subtitleStyle);
@@ -135,7 +100,7 @@ const CardTitle = React.createClass({
         {this.props.children}
       </div>
     );
-  },
-});
+  }
+}
 
 export default CardTitle;

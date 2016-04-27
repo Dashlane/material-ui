@@ -1,19 +1,19 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import transitions from '../styles/transitions';
 import ClickAwayListener from '../internal/ClickAwayListener';
 import FlatButton from '../FlatButton';
-import getMuiTheme from '../styles/getMuiTheme';
 import StyleResizable from '../utils/styleResizable';
 
-function getStyles(props, state) {
+function getStyles(props, context, state) {
   const {
     muiTheme: {
       baseTheme,
       snackbar,
       zIndex,
     },
-    open,
-  } = state;
+  } = context;
+
+  const {open} = state;
 
   const {
     desktopGutter,
@@ -71,26 +71,22 @@ const Snackbar = React.createClass({
     /**
      * The label for the action on the snackbar.
      */
-    action: React.PropTypes.string,
-
+    action: PropTypes.string,
     /**
      * The number of milliseconds to wait before automatically dismissing.
      * If no value is specified the snackbar will dismiss normally.
      * If a value is provided the snackbar can still be dismissed normally.
      * If a snackbar is dismissed before the timer expires, the timer will be cleared.
      */
-    autoHideDuration: React.PropTypes.number,
-
+    autoHideDuration: PropTypes.number,
     /**
      * Override the inline-styles of the body element.
      */
-    bodyStyle: React.PropTypes.object,
-
+    bodyStyle: PropTypes.object,
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
      * The message to be displayed.
      *
@@ -98,15 +94,13 @@ const Snackbar = React.createClass({
      * ensure that the same object remains as the `message` property if you want to avoid the `Snackbar` hiding and
      * showing again)
      */
-    message: React.PropTypes.node.isRequired,
-
+    message: PropTypes.node.isRequired,
     /**
      * Fired when the action button is touchtapped.
      *
      * @param {object} event Action button event.
      */
-    onActionTouchTap: React.PropTypes.func,
-
+    onActionTouchTap: PropTypes.func,
     /**
      * Fired when the `Snackbar` is requested to be closed by a click outside the `Snackbar`, or after the
      * `autoHideDuration` timer expires.
@@ -119,25 +113,19 @@ const Snackbar = React.createClass({
      *
      * @param {string} reason Can be:`"timeout"` (`autoHideDuration` expired) or: `"clickaway"`
      */
-    onRequestClose: React.PropTypes.func,
-
+    onRequestClose: PropTypes.func,
     /**
      * Controls whether the `Snackbar` is opened or not.
      */
-    open: React.PropTypes.bool.isRequired,
-
+    open: PropTypes.bool.isRequired,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
+    style: PropTypes.object,
   },
 
   contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
+    muiTheme: PropTypes.object.isRequired,
   },
 
   mixins: [
@@ -149,13 +137,6 @@ const Snackbar = React.createClass({
       open: this.props.open,
       message: this.props.message,
       action: this.props.action,
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
     };
   },
 
@@ -166,11 +147,7 @@ const Snackbar = React.createClass({
     }
   },
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-
+  componentWillReceiveProps(nextProps) {
     if (this.state.open && nextProps.open === this.props.open &&
         (nextProps.message !== this.props.message || nextProps.action !== this.props.action)) {
       this.setState({
@@ -212,12 +189,6 @@ const Snackbar = React.createClass({
     clearTimeout(this.timerTransitionId);
     clearTimeout(this.timerOneAtTheTimeId);
   },
-
-  manuallyBindClickAway: true,
-
-  timerAutoHideId: undefined,
-  timerTransitionId: undefined,
-  timerOneAtTheTimeId: undefined,
 
   componentClickAway() {
     if (this.timerTransitionId) return; // If transitioning, don't close snackbar
@@ -263,13 +234,11 @@ const Snackbar = React.createClass({
     const {
       action,
       message,
-      muiTheme: {
-        prepareStyles,
-      },
       open,
     } = this.state;
 
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context, this.state);
 
     const actionButton = action && (
       <FlatButton

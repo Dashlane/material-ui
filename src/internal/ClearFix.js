@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import BeforeAfterWrapper from './BeforeAfterWrapper';
 
 const styles = {
@@ -24,15 +24,14 @@ const ClearFix = ({style, children, ...other}) => (
   </BeforeAfterWrapper>
 );
 
-ClearFix.displayName = 'ClearFix';
+ClearFix.muiName = 'ClearFix';
 
 ClearFix.propTypes = {
-  children: React.PropTypes.node,
-
+  children: PropTypes.node,
   /**
    * Override the inline-styles of the root element.
    */
-  style: React.PropTypes.object,
+  style: PropTypes.object,
 };
 
 export default ClearFix;

@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import IconButton from '../IconButton';
 import Toolbar from '../Toolbar/Toolbar';
 import ToolbarGroup from '../Toolbar/ToolbarGroup';
 import NavigationChevronLeft from '../svg-icons/navigation/chevron-left';
 import NavigationChevronRight from '../svg-icons/navigation/chevron-right';
 import SlideInTransitionGroup from '../internal/SlideIn';
-import getMuiTheme from '../styles/getMuiTheme';
 
 const styles = {
   root: {
@@ -25,67 +24,45 @@ const styles = {
   },
 };
 
-const CalendarToolbar = React.createClass({
+class CalendarToolbar extends Component {
+  static propTypes = {
+    DateTimeFormat: PropTypes.func.isRequired,
+    displayDate: PropTypes.object.isRequired,
+    locale: PropTypes.string.isRequired,
+    nextMonth: PropTypes.bool,
+    onMonthChange: PropTypes.func,
+    prevMonth: PropTypes.bool,
+  };
 
-  propTypes: {
-    DateTimeFormat: React.PropTypes.func.isRequired,
-    displayDate: React.PropTypes.object.isRequired,
-    locale: React.PropTypes.string.isRequired,
-    nextMonth: React.PropTypes.bool,
-    onMonthChange: React.PropTypes.func,
-    prevMonth: React.PropTypes.bool,
-  },
+  static defaultProps = {
+    nextMonth: true,
+    prevMonth: true,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  //for passing default theme context to children
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  state = {
+    transitionDirection: 'up',
+  };
 
-  getDefaultProps() {
-    return {
-      nextMonth: true,
-      prevMonth: true,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-      transitionDirection: 'up',
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps(nextProps, nextContext) {
-    const newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-
+  componentWillReceiveProps(nextProps) {
     if (nextProps.displayDate !== this.props.displayDate) {
       const direction = nextProps.displayDate > this.props.displayDate ? 'up' : 'down';
       this.setState({
         transitionDirection: direction,
       });
     }
-  },
+  }
 
-  handleTouchTapPrevMonth() {
+  handleTouchTapPrevMonth = () => {
     if (this.props.onMonthChange && this.props.prevMonth) this.props.onMonthChange(-1);
-  },
+  };
 
-  handleTouchTapNextMonth() {
+  handleTouchTapNextMonth = () => {
     if (this.props.onMonthChange && this.props.nextMonth) this.props.onMonthChange(1);
-  },
+  };
 
   render() {
     const {
@@ -99,8 +76,8 @@ const CalendarToolbar = React.createClass({
       year: 'numeric',
     }).format(displayDate);
 
-    const nextButtonIcon = this.state.muiTheme.isRtl ? <NavigationChevronRight /> : <NavigationChevronLeft />;
-    const prevButtonIcon = this.state.muiTheme.isRtl ? <NavigationChevronLeft /> : <NavigationChevronRight />;
+    const nextButtonIcon = this.context.muiTheme.isRtl ? <NavigationChevronRight /> : <NavigationChevronLeft />;
+    const prevButtonIcon = this.context.muiTheme.isRtl ? <NavigationChevronLeft /> : <NavigationChevronRight />;
 
     return (
       <Toolbar style={styles.root} noGutter={true}>
@@ -130,8 +107,7 @@ const CalendarToolbar = React.createClass({
         </ToolbarGroup>
       </Toolbar>
     );
-  },
-
-});
+  }
+}
 
 export default CalendarToolbar;

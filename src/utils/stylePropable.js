@@ -1,4 +1,4 @@
-import React from 'react';
+import {PropTypes} from 'react';
 import warning from 'warning';
 
 let hasWarned;
@@ -16,7 +16,7 @@ export const mergeStyles = (...args) => {
 export default {
 
   propTypes: {
-    style: React.PropTypes.object,
+    style: PropTypes.object,
   },
 
   mergeStyles,
@@ -25,7 +25,8 @@ export default {
     warn();
     const {
       prepareStyles = (style) => (style),
-    } = (this.state && this.state.muiTheme) || (this.context && this.context.muiTheme) ||
+    } = (this.state && this.state.muiTheme) ||
+        (this.context && this.context.muiTheme) ||
         (this.props && this.props.muiTheme) || {};
 
     return prepareStyles(mergeStyles(...args));

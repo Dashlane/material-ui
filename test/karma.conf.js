@@ -1,3 +1,4 @@
+const path = require('path');
 const argv = process.argv.slice(2);
 const opts = {
   coverage: true,
@@ -54,14 +55,18 @@ module.exports = function(config) {
       module: {
         preLoaders: opts.coverage ? [
           {
-            test: /\.(js|jsx)$/,
+            test: /\.js$/,
             loader: 'isparta',
-            exclude: /(node_modules|test|svg-icons)/,
+            include: /src/,
+            exclude: [
+              /svg-icons/,
+              /node_modules/,
+            ],
           },
         ] : [],
         loaders: [
           {
-            test: /\.(js|jsx)$/,
+            test: /\.js$/,
             loader: 'babel',
             exclude: /node_modules/,
             query: {
@@ -79,6 +84,7 @@ module.exports = function(config) {
       },
       resolve: {
         alias: {
+          'material-ui': path.resolve(__dirname, '../src'),
           sinon: 'sinon/pkg/sinon.js',
         },
         extensions: ['', '.js', '.jsx', '.json'],
@@ -92,6 +98,7 @@ module.exports = function(config) {
         'react/lib/ExecutionEnvironment': true,
         'react/lib/ReactContext': 'window',
         'text-encoding': 'window',
+        'react/addons': true, // For enzyme
       },
     },
     webpackServer: {
@@ -105,10 +112,8 @@ module.exports = function(config) {
       includeAllSources: true,
       reporters: [
         {type: 'lcovonly', file: 'lcov.info'},
-        {type: 'text', file: 'text.txt'},
         {type: 'json', file: 'coverage.json'},
         {type: 'text-summary'},
-        {type: 'html'},
       ],
     } : {},
   });

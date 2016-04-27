@@ -1,15 +1,8 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
-function getStyles(props, state) {
-  const {
-    primary,
-    secondary,
-  } = props;
-
-  const {
-    badge,
-  } = state.muiTheme;
+function getStyles(props, context) {
+  const {primary, secondary} = props;
+  const {badge} = context.muiTheme;
 
   let badgeBackgroundColor;
   let badgeTextColor;
@@ -55,76 +48,46 @@ function getStyles(props, state) {
   };
 }
 
-const Badge = React.createClass({
-  propTypes: {
+class Badge extends Component {
+  static propTypes = {
     /**
      * This is the content rendered within the badge.
      */
-    badgeContent: React.PropTypes.node.isRequired,
-
+    badgeContent: PropTypes.node.isRequired,
     /**
      * Override the inline-styles of the badge element.
      */
-    badgeStyle: React.PropTypes.object,
-
+    badgeStyle: PropTypes.object,
     /**
      * The badge will be added relativelty to this node.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
      * If true, the badge will use the primary badge colors.
      */
-    primary: React.PropTypes.bool,
-
+    primary: PropTypes.bool,
     /**
      * If true, the badge will use the secondary badge colors.
      */
-    secondary: React.PropTypes.bool,
-
+    secondary: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    primary: false,
+    secondary: false,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getDefaultProps() {
-    return {
-      primary: false,
-      secondary: false,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -135,11 +98,8 @@ const Badge = React.createClass({
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
 
     return (
       <div {...other} style={prepareStyles(Object.assign({}, styles.root, style))}>
@@ -149,7 +109,7 @@ const Badge = React.createClass({
         </span>
       </div>
     );
-  },
-});
+  }
+}
 
 export default Badge;

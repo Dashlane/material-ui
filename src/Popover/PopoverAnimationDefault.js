@@ -1,21 +1,12 @@
 import transitions from '../styles/transitions';
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import propTypes from '../utils/propTypes';
-import getMuiTheme from '../styles/getMuiTheme';
 import Paper from '../Paper';
 
-function getStyles(props, state) {
-  const {
-    targetOrigin,
-  } = props;
-
-  const {
-    open,
-    muiTheme: {
-      zIndex,
-    },
-  } = state;
-
+function getStyles(props, context, state) {
+  const {targetOrigin} = props;
+  const {open} = state;
+  const {muiTheme} = context;
   const horizontal = targetOrigin.horizontal.replace('middle', 'vertical');
 
   return {
@@ -24,7 +15,7 @@ function getStyles(props, state) {
       transform: open ? 'scale(1, 1)' : 'scale(0, 0)',
       transformOrigin: `${horizontal} ${targetOrigin.vertical}`,
       position: 'fixed',
-      zIndex: zIndex.popover,
+      zIndex: muiTheme.zIndex.popover,
       transition: transitions.easeOut('250ms', ['transform', 'opacity']),
       maxHeight: '100%',
     },
@@ -45,63 +36,44 @@ function getStyles(props, state) {
   };
 }
 
-const PopoverDefaultAnimation = React.createClass({
-
-  propTypes: {
-    children: React.PropTypes.node,
-
+class PopoverDefaultAnimation extends Component {
+  static propTypes = {
+    children: PropTypes.node,
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-    open: React.PropTypes.bool.isRequired,
-
+    className: PropTypes.string,
+    open: PropTypes.bool.isRequired,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
+    style: PropTypes.object,
     targetOrigin: propTypes.origin,
     zDepth: propTypes.zDepth,
-  },
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    style: {},
+    zDepth: 1,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  getDefaultProps() {
-    return {
-      style: {},
-      zDepth: 1,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-      open: false,
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
+  state = {
+    open: false,
+  };
 
   componentDidMount() {
-    this.setState({open: true}); //eslint-disable-line react/no-did-mount-set-state
-  },
+    this.setState({open: true}); // eslint-disable-line react/no-did-mount-set-state
+  }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  componentWillReceiveProps(nextProps) {
     this.setState({
       open: nextProps.open,
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
     });
-  },
+  }
 
   render() {
     const {
@@ -110,11 +82,8 @@ const PopoverDefaultAnimation = React.createClass({
       zDepth,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context, this.state);
 
     return (
       <Paper
@@ -129,7 +98,7 @@ const PopoverDefaultAnimation = React.createClass({
         </div>
       </Paper>
     );
-  },
-});
+  }
+}
 
 export default PopoverDefaultAnimation;

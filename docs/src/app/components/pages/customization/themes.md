@@ -24,7 +24,7 @@ Then, you can use `<MuiThemeProvider />` to provide it down the tree to componen
 ```js
 import React from 'react';
 import {cyan500} from 'material-ui/styles/colors';
-import MuiThemeProvider from 'material-ui/stylesMuiThemeProvider';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 
@@ -113,7 +113,7 @@ class DeepDownTheTree extends React.Component {
 }
 
 DeepDownTheTree.propTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
+  muiTheme: PropTypes.object.isRequired,
 };
 
 export default muiThemeable()(DeepDownTheTree);
@@ -145,7 +145,7 @@ class Main extends React.Component {
 }
 
 Main.childContextTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
+  muiTheme: PropTypes.object.isRequired,
 };
 
 export default Main;
@@ -167,7 +167,7 @@ class DeepDownTheTree extends React.Component {
 }
 
 DeepDownTheTree.contextTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
+  muiTheme: PropTypes.object.isRequired,
 };
 
 export default DeepDownTheTree;
@@ -198,7 +198,7 @@ grey100, grey300, grey400, grey500,
 pinkA200,
 white, darkBlack, fullBlack,
 } from 'material-ui/styles/colors';
-import ColorManipulator from 'material-ui/utils/color-manipulator';
+import {fade} from 'material-ui/utils/colorManipulator';
 
 const lightBaseTheme = {
   spacing: {
@@ -210,7 +210,7 @@ const lightBaseTheme = {
     desktopKeylineIncrement: 64,
     desktopDropDownMenuItemHeight: 32,
     desktopDropDownMenuFontSize: 15,
-    desktopLeftNavMenuItemHeight: 48,
+    desktopDrawerMenuItemHeight: 48,
     desktopSubheaderHeight: 48,
     desktopToolbarHeight: 56,
   },
@@ -226,9 +226,9 @@ const lightBaseTheme = {
     alternateTextColor: white,
     canvasColor: white,
     borderColor: grey300,
-    disabledColor: ColorManipulator.fade(darkBlack, 0.3),
+    disabledColor: fade(darkBlack, 0.3),
     pickerHeaderColor: cyan500,
-    clockCircleColor: ColorManipulator.fade(darkBlack, 0.07),
+    clockCircleColor: fade(darkBlack, 0.07),
     shadowColor: fullBlack,
   },
 };

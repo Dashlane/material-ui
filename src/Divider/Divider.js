@@ -1,44 +1,37 @@
-import React from 'react';
-import muiThemeable from '../styles/muiThemeable';
+import React, {PropTypes} from 'react';
 
 const propTypes = {
   /**
    * The css class name of the root element.
    */
-  className: React.PropTypes.string,
-
+  className: PropTypes.string,
   /**
    * If true, the `Divider` will be indented `72px`.
    */
-  inset: React.PropTypes.bool,
-
-  /**
-   * @ignore
-   * The material-ui theme applied to this component.
-   */
-  muiTheme: React.PropTypes.object.isRequired,
-
+  inset: PropTypes.bool,
   /**
    * Override the inline-styles of the root element.
    */
-  style: React.PropTypes.object,
+  style: PropTypes.object,
 };
 
 const defaultProps = {
   inset: false,
 };
 
-let Divider = (props) => {
+const contextTypes = {
+  muiTheme: PropTypes.object.isRequired,
+};
+
+const Divider = (props, context) => {
   const {
     inset,
-    muiTheme,
     style,
     ...other,
   } = props;
 
-  const {
-    prepareStyles,
-  } = muiTheme;
+  const {muiTheme} = context;
+  const {prepareStyles} = muiTheme;
 
   const styles = {
     root: {
@@ -47,7 +40,7 @@ let Divider = (props) => {
       marginLeft: inset ? 72 : 0,
       height: 1,
       border: 'none',
-      backgroundColor: muiTheme.rawTheme.palette.borderColor,
+      backgroundColor: muiTheme.baseTheme.palette.borderColor,
     },
   };
 
@@ -56,10 +49,9 @@ let Divider = (props) => {
   );
 };
 
+Divider.muiName = 'Divider';
 Divider.propTypes = propTypes;
 Divider.defaultProps = defaultProps;
-
-Divider = muiThemeable()(Divider);
-Divider.displayName = 'Divider';
+Divider.contextTypes = contextTypes;
 
 export default Divider;

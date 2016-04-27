@@ -1,162 +1,132 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import EventListener from 'react-event-listener';
 import RenderToLayer from '../internal/RenderToLayer';
 import propTypes from '../utils/propTypes';
 import Paper from '../Paper';
 import throttle from 'lodash.throttle';
-import getMuiTheme from '../styles/getMuiTheme';
 import PopoverAnimationDefault from './PopoverAnimationDefault';
 
-const Popover = React.createClass({
-
-  propTypes: {
+class Popover extends Component {
+  static propTypes = {
     /**
      * This is the DOM element that will be used to set the position of the
-     * component.
+     * popover.
      */
-    anchorEl: React.PropTypes.object,
-
+    anchorEl: PropTypes.object,
     /**
-     * This is the point on the anchor where the popover
-     * targetOrigin will stick to.
+     * This is the point on the anchor where the popover's
+     * `targetOrigin` will attach to.
      * Options:
-     * vertical: [top, middle, bottom]
-     * horizontal: [left, center, right]
+     * vertical: [top, middle, bottom];
+     * horizontal: [left, center, right].
      */
     anchorOrigin: propTypes.origin,
-
     /**
      * If true, the popover will apply transitions when
-     * added it gets added to the DOM.
+     * it is added to the DOM.
      */
-    animated: React.PropTypes.bool,
-
+    animated: PropTypes.bool,
     /**
      * Override the default animation component used.
      */
-    animation: React.PropTypes.func,
-
+    animation: PropTypes.func,
     /**
-     * If true, the popover will hide when the anchor scrolls off the screen
+     * If true, the popover will hide when the anchor is scrolled off the screen.
      */
-    autoCloseWhenOffScreen: React.PropTypes.bool,
-
+    autoCloseWhenOffScreen: PropTypes.bool,
     /**
-     * If true, the popover (potentially) ignores targetOrigin
-     * and anchorOrigin to make itself fit on screen,
+     * If true, the popover (potentially) ignores `targetOrigin`
+     * and `anchorOrigin` to make itself fit on screen,
      * which is useful for mobile devices.
      */
-    canAutoPosition: React.PropTypes.bool,
-
+    canAutoPosition: PropTypes.bool,
     /**
-     * Use this property to render your component inside the `Popover`.
+     * The content of the popover.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
-     * The css class name of the root element.
+     * The CSS class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
-     * This is a callback that fires when the popover
-     * thinks it should close. (e.g. clickAway or offScreen)
+     * Callback function fired when the popover is requested to be closed.
      *
-     * @param {string} reason Determines what triggered this request.
+     * @param {string} reason The reason for the close request. Possibles values
+     * are 'clickAway' and 'offScreen'.
      */
-    onRequestClose: React.PropTypes.func,
-
+    onRequestClose: PropTypes.func,
     /**
-     * Controls the visibility of the popover.
+     * If true, the popover is visible.
      */
-    open: React.PropTypes.bool,
-
+    open: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
-     * This is the point on the popover which will stick to
-     * the anchors origin.
+     * This is the point on the popover which will attach to
+     * the anchor's origin.
      * Options:
-     * vertical: [top, middle, bottom]
-     * horizontal: [left, center, right]
+     * vertical: [top, middle, bottom];
+     * horizontal: [left, center, right].
      */
     targetOrigin: propTypes.origin,
-
     /**
      * If true, the popover will render on top of an invisible
      * layer, which will prevent clicks to the underlying
-     * elements, and trigger an onRequestClose(clickAway) event.
+     * elements, and trigger an `onRequestClose('clickAway')` call.
      */
-    useLayerForClickAway: React.PropTypes.bool,
-
+    useLayerForClickAway: PropTypes.bool,
     /**
-     * This number represents the zDepth of the paper shadow.
+     * The zDepth of the popover.
      */
     zDepth: propTypes.zDepth,
-  },
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'left',
+    },
+    animated: true,
+    autoCloseWhenOffScreen: true,
+    canAutoPosition: true,
+    onRequestClose: () => {},
+    open: false,
+    style: {
+      overflowY: 'auto',
+    },
+    targetOrigin: {
+      vertical: 'top',
+      horizontal: 'left',
+    },
+    useLayerForClickAway: true,
+    zDepth: 1,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  getDefaultProps() {
-    return {
-      anchorOrigin: {
-        vertical: 'bottom',
-        horizontal: 'left',
-      },
-      animated: true,
-      autoCloseWhenOffScreen: true,
-      canAutoPosition: true,
-      onRequestClose: () => {},
-      open: false,
-      style: {
-        overflowY: 'auto',
-      },
-      targetOrigin: {
-        vertical: 'top',
-        horizontal: 'left',
-      },
-      useLayerForClickAway: true,
-      zDepth: 1,
-    };
-  },
-
-  getInitialState() {
+  constructor(props, context) {
+    super(props, context);
     this.handleResize = throttle(this.setPlacement, 100);
     this.handleScroll = throttle(this.setPlacement.bind(this, true), 100);
 
-    return {
-      open: this.props.open,
+    this.state = {
+      open: props.open,
       closing: false,
-      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
-  },
+  }
 
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    const newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-
+  componentWillReceiveProps(nextProps) {
     if (nextProps.open !== this.state.open) {
       if (nextProps.open) {
         this.anchorEl = nextProps.anchorEl || this.props.anchorEl;
         this.setState({
           open: true,
           closing: false,
-          muiTheme: newMuiTheme,
         });
       } else {
         if (nextProps.animated) {
@@ -164,30 +134,28 @@ const Popover = React.createClass({
           this.timeout = setTimeout(() => {
             this.setState({
               open: false,
-              muiTheme: newMuiTheme,
             });
           }, 500);
         } else {
           this.setState({
             open: false,
-            muiTheme: newMuiTheme,
           });
         }
       }
     }
-  },
+  }
 
   componentDidUpdate() {
     this.setPlacement();
-  },
+  }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
-  },
+  }
 
-  renderLayer() {
+  renderLayer = () => {
     const {
-      animated,
+      animated, // eslint-disable-line no-unused-vars
       animation,
       children,
       style,
@@ -212,21 +180,21 @@ const Popover = React.createClass({
         {children}
       </Animation>
     );
-  },
+  };
 
   requestClose(reason) {
     if (this.props.onRequestClose) {
       this.props.onRequestClose(reason);
     }
-  },
+  }
 
-  componentClickAway() {
+  componentClickAway = () => {
     this.requestClose('clickAway');
-  },
+  };
 
   _resizeAutoPosition() {
     this.setPlacement();
-  },
+  }
 
   getAnchorPosition(el) {
     if (!el) {
@@ -247,7 +215,7 @@ const Popover = React.createClass({
     a.center = a.top + ((a.bottom - a.top) / 2);
 
     return a;
-  },
+  }
 
   getTargetPosition(targetEl) {
     return {
@@ -258,9 +226,9 @@ const Popover = React.createClass({
       middle: targetEl.offsetWidth / 2,
       right: targetEl.offsetWidth,
     };
-  },
+  }
 
-  setPlacement(scrolling) {
+  setPlacement = (scrolling) => {
     if (!this.state.open) {
       return;
     }
@@ -298,7 +266,7 @@ const Popover = React.createClass({
     targetEl.style.top = `${Math.max(0, targetPosition.top)}px`;
     targetEl.style.left = `${Math.max(0, targetPosition.left)}px`;
     targetEl.style.maxHeight = `${window.innerHeight}px`;
-  },
+  };
 
   autoCloseWhenOffScreen(anchorPosition) {
     if (anchorPosition.top < 0 ||
@@ -307,13 +275,13 @@ const Popover = React.createClass({
       anchorPosition.left > window.innerWith) {
       this.requestClose('offScreen');
     }
-  },
+  }
 
   getOverlapMode(anchor, target, median) {
     if ([anchor, target].indexOf(median) >= 0) return 'auto';
     if (anchor === target) return 'inclusive';
     return 'exclusive';
-  },
+  }
 
   getPositions(anchor, target) {
     const a = {...anchor};
@@ -350,7 +318,7 @@ const Popover = React.createClass({
       positions: positions,
       anchorPos: a,
     };
-  },
+  }
 
   applyAutoPositionIfNeeded(anchor, target, targetOrigin, anchorOrigin, targetPosition) {
     const {positions, anchorPos} = this.getPositions(anchorOrigin, targetOrigin);
@@ -376,11 +344,11 @@ const Popover = React.createClass({
       }
     }
     return targetPosition;
-  },
+  }
 
   render() {
     return (
-      <div>
+      <div style={{display: 'none'}}>
         <EventListener
           elementName="window"
           onScroll={this.handleScroll}
@@ -395,8 +363,7 @@ const Popover = React.createClass({
         />
       </div>
     );
-  },
-
-});
+  }
+}
 
 export default Popover;

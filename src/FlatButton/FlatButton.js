@@ -1,10 +1,9 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import transitions from '../styles/transitions';
-import Children from '../utils/children';
-import ColorManipulator from '../utils/colorManipulator';
+import {createChildFragment} from '../utils/childUtils';
+import {fade} from '../utils/colorManipulator';
 import EnhancedButton from '../internal/EnhancedButton';
 import FlatButtonLabel from './FlatButtonLabel';
-import getMuiTheme from '../styles/getMuiTheme';
 
 function validateLabel(props, propName, componentName) {
   if (!props.children && !props.label && !props.icon) {
@@ -12,14 +11,14 @@ function validateLabel(props, propName, componentName) {
   }
 }
 
-const FlatButton = React.createClass({
+class FlatButton extends Component {
+  static muiName = 'FlatButton';
 
-  propTypes: {
+  static propTypes = {
     /**
      * Color of button when mouse is not hovering over it.
      */
-    backgroundColor: React.PropTypes.string,
-
+    backgroundColor: PropTypes.string,
     /**
      * This is what will be displayed inside the button.
      * If a label is specified, the text within the label prop will
@@ -29,166 +28,129 @@ const FlatButton = React.createClass({
      * that acts as our label to be displayed.) This only
      * applies to flat and raised buttons.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * Disables the button if set to true.
      */
-    disabled: React.PropTypes.bool,
-
+    disabled: PropTypes.bool,
     /**
      * Color of button when mouse hovers over.
      */
-    hoverColor: React.PropTypes.string,
-
+    hoverColor: PropTypes.string,
     /**
      * URL to link to when button clicked if `linkButton` is set to true.
      */
-    href: React.PropTypes.string,
-
+    href: PropTypes.string,
     /**
      * Use this property to display an icon.
      */
-    icon: React.PropTypes.node,
-
+    icon: PropTypes.node,
     /**
      * Label for the button.
      */
     label: validateLabel,
-
     /**
      * Place label before or after the passed children.
      */
-    labelPosition: React.PropTypes.oneOf([
+    labelPosition: PropTypes.oneOf([
       'before',
       'after',
     ]),
-
     /**
      * Override the inline-styles of the button's label element.
      */
-    labelStyle: React.PropTypes.object,
-
+    labelStyle: PropTypes.object,
     /**
      * Enables use of `href` property to provide a URL to link to if set to true.
      */
-    linkButton: React.PropTypes.bool,
-
+    linkButton: PropTypes.bool,
     /**
      * Callback function fired when the element is focused or blurred by the keyboard.
      *
      * @param {object} event `focus` or `blur` event targeting the element.
      * @param {boolean} isKeyboardFocused Indicates whether the element is focused.
      */
-    onKeyboardFocus: React.PropTypes.func,
-
+    onKeyboardFocus: PropTypes.func,
     /**
      * Callback function fired when the mouse enters the element.
      *
      * @param {object} event `mouseenter` event targeting the element.
      */
-    onMouseEnter: React.PropTypes.func,
-
+    onMouseEnter: PropTypes.func,
     /**
      * Callback function fired when the mouse leaves the element.
      *
      * @param {object} event `mouseleave` event targeting the element.
      */
-    onMouseLeave: React.PropTypes.func,
-
+    onMouseLeave: PropTypes.func,
     /**
      * Callback function fired when the element is touched.
      *
      * @param {object} event `touchstart` event targeting the element.
      */
-    onTouchStart: React.PropTypes.func,
-
+    onTouchStart: PropTypes.func,
     /**
      * If true, colors button according to
      * primaryTextColor from the Theme.
      */
-    primary: React.PropTypes.bool,
-
+    primary: PropTypes.bool,
     /**
      * Color for the ripple after button is clicked.
      */
-    rippleColor: React.PropTypes.string,
-
+    rippleColor: PropTypes.string,
     /**
      * If true, colors button according to secondaryTextColor from the theme.
      * The primary prop has precendent if set to true.
      */
-    secondary: React.PropTypes.bool,
-
+    secondary: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    disabled: false,
+    labelStyle: {},
+    labelPosition: 'after',
+    onKeyboardFocus: () => {},
+    onMouseEnter: () => {},
+    onMouseLeave: () => {},
+    onTouchStart: () => {},
+    primary: false,
+    secondary: false,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  getDefaultProps() {
-    return {
-      disabled: false,
-      labelStyle: {},
-      labelPosition: 'after',
-      onKeyboardFocus: () => {},
-      onMouseEnter: () => {},
-      onMouseLeave: () => {},
-      onTouchStart: () => {},
-      primary: false,
-      secondary: false,
-    };
-  },
+  state = {
+    hovered: false,
+    isKeyboardFocused: false,
+    touch: false,
+  };
 
-  getInitialState() {
-    return {
-      hovered: false,
-      isKeyboardFocused: false,
-      touch: false,
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
-
-  _handleKeyboardFocus(event, isKeyboardFocused) {
+  handleKeyboardFocus = (event, isKeyboardFocused) => {
     this.setState({isKeyboardFocused: isKeyboardFocused});
     this.props.onKeyboardFocus(event, isKeyboardFocused);
-  },
+  };
 
-  _handleMouseEnter(event) {
-    //Cancel hover styles for touch devices
+  handleMouseEnter = (event) => {
+    // Cancel hover styles for touch devices
     if (!this.state.touch) this.setState({hovered: true});
     this.props.onMouseEnter(event);
-  },
+  };
 
-  _handleMouseLeave(event) {
+  handleMouseLeave = (event) => {
     this.setState({hovered: false});
     this.props.onMouseLeave(event);
-  },
+  };
 
-  _handleTouchStart(event) {
+  handleTouchStart = (event) => {
     this.setState({touch: true});
     this.props.onTouchStart(event);
-  },
+  };
 
   render() {
     const {
@@ -225,13 +187,13 @@ const FlatButton = React.createClass({
         textColor,
         textTransform = buttonTextTransform || 'uppercase',
       },
-    } = this.state.muiTheme;
+    } = this.context.muiTheme;
     const defaultTextColor = disabled ? disabledTextColor :
       primary ? primaryTextColor :
       secondary ? secondaryTextColor :
       textColor;
 
-    const defaultHoverColor = ColorManipulator.fade(buttonFilterColor, 0.2);
+    const defaultHoverColor = fade(buttonFilterColor, 0.2);
     const defaultRippleColor = buttonFilterColor;
     const buttonHoverColor = hoverColor || defaultHoverColor;
     const buttonRippleColor = rippleColor || defaultRippleColor;
@@ -285,17 +247,18 @@ const FlatButton = React.createClass({
 
     // Place label before or after children.
     const childrenFragment = labelPosition === 'before' ?
-      {
-        labelElement,
-        iconCloned,
-        children,
-      } :
-      {
-        children,
-        iconCloned,
-        labelElement,
-      };
-    const enhancedButtonChildren = Children.create(childrenFragment);
+    {
+      labelElement,
+      iconCloned,
+      children,
+    } :
+    {
+      children,
+      iconCloned,
+      labelElement,
+    };
+
+    const enhancedButtonChildren = createChildFragment(childrenFragment);
 
     return (
       <EnhancedButton
@@ -304,10 +267,10 @@ const FlatButton = React.createClass({
         focusRippleColor={buttonRippleColor}
         focusRippleOpacity={0.3}
         linkButton={linkButton}
-        onKeyboardFocus={this._handleKeyboardFocus}
-        onMouseLeave={this._handleMouseLeave}
-        onMouseEnter={this._handleMouseEnter}
-        onTouchStart={this._handleTouchStart}
+        onKeyboardFocus={this.handleKeyboardFocus}
+        onMouseLeave={this.handleMouseLeave}
+        onMouseEnter={this.handleMouseEnter}
+        onTouchStart={this.handleTouchStart}
         style={mergedRootStyles}
         touchRippleColor={buttonRippleColor}
         touchRippleOpacity={0.3}
@@ -315,7 +278,7 @@ const FlatButton = React.createClass({
         {enhancedButtonChildren}
       </EnhancedButton>
     );
-  },
-});
+  }
+}
 
 export default FlatButton;

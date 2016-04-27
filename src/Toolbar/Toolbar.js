@@ -1,15 +1,12 @@
-import React from 'react';
-import getMuiTheme from '../styles/getMuiTheme';
+import React, {Component, PropTypes} from 'react';
 
-function getStyles(props, state) {
-  const {
-    noGutter,
-  } = props;
+function getStyles(props, context) {
+  const {noGutter} = props;
 
   const {
     baseTheme,
     toolbar,
-  } = state.muiTheme;
+  } = context.muiTheme;
 
   return {
     root: {
@@ -24,61 +21,33 @@ function getStyles(props, state) {
   };
 }
 
-const Toolbar = React.createClass({
-
-  propTypes: {
+class Toolbar extends Component {
+  static propTypes = {
     /**
      * Can be a `ToolbarGroup` to render a group of related items.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * The css class name of the root element.
      */
-    className: React.PropTypes.string,
-
+    className: PropTypes.string,
     /**
      * Do not apply `desktopGutter` to the `Toolbar`.
      */
-    noGutter: React.PropTypes.bool,
-
+    noGutter: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-  },
+    style: PropTypes.object,
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    noGutter: false,
+  };
 
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  getDefaultProps() {
-    return {
-      noGutter: false,
-    };
-  },
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -88,18 +57,15 @@ const Toolbar = React.createClass({
       ...other,
     } = this.props;
 
-    const {
-      prepareStyles,
-    } = this.state.muiTheme;
-
-    const styles = getStyles(this.props, this.state);
+    const {prepareStyles} = this.context.muiTheme;
+    const styles = getStyles(this.props, this.context);
 
     return (
       <div {...other} className={className} style={prepareStyles(Object.assign({}, styles.root, style))}>
         {children}
       </div>
     );
-  },
-});
+  }
+}
 
 export default Toolbar;

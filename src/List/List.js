@@ -1,80 +1,46 @@
-import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React, {Component, PropTypes} from 'react';
 import propTypes from '../utils/propTypes';
-import getMuiTheme from '../styles/getMuiTheme';
 import Subheader from '../Subheader';
 import deprecated from '../utils/deprecatedPropType';
 import warning from 'warning';
 
-const List = React.createClass({
-
-  propTypes: {
+class List extends Component {
+  static propTypes = {
     /**
-     * These are usually ListItems that are passed to
+     * These are usually `ListItem`s that are passed to
      * be part of the list.
      */
-    children: React.PropTypes.node,
-
+    children: PropTypes.node,
     /**
      * If true, the subheader will be indented by 72px.
      */
-    insetSubheader: deprecated(React.PropTypes.bool,
+    insetSubheader: deprecated(PropTypes.bool,
       'Refer to the `subheader` property.'),
-
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * The subheader string that will be displayed at the top of the list.
      */
-    subheader: deprecated(React.PropTypes.node,
+    subheader: deprecated(PropTypes.node,
       'Instead, nest the `Subheader` component directly inside the `List`.'),
-
     /**
-     * The style object to override subheader styles.
+     * Override the inline-styles of the subheader element.
      */
-    subheaderStyle: deprecated(React.PropTypes.object,
+    subheaderStyle: deprecated(PropTypes.object,
       'Refer to the `subheader` property.'),
-
     /**
      * @ignore
      * ** Breaking change ** List no longer supports `zDepth`. Instead, wrap it in `Paper`
      * or another component that provides zDepth.
      */
     zDepth: propTypes.zDepth,
-  },
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
-
-  mixins: [
-    PureRenderMixin,
-  ],
-
-  getInitialState() {
-    return {
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      muiTheme: nextContext.muiTheme || this.state.muiTheme,
-    });
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
   render() {
     const {
@@ -118,7 +84,7 @@ const List = React.createClass({
         {children}
       </div>
     );
-  },
-});
+  }
+}
 
 export default List;

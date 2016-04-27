@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import warning from 'warning';
-import DateTime from '../utils/dateTime.js';
 import TimePickerDialog from './TimePickerDialog';
 import TextField from '../TextField';
-import getMuiTheme from '../styles/getMuiTheme';
+import {formatTime} from './timeUtils';
 
 const emptyTime = new Date();
 emptyTime.setHours(0);
@@ -11,124 +10,104 @@ emptyTime.setMinutes(0);
 emptyTime.setSeconds(0);
 emptyTime.setMilliseconds(0);
 
-const TimePicker = React.createClass({
-
-  propTypes: {
+class TimePicker extends Component {
+  static propTypes = {
     /**
      * If true, automatically accept and close the picker on set minutes.
      */
-    autoOk: React.PropTypes.bool,
-
-   /**
-    * Override the label of the 'Cancel' button.
-    */
-    cancelLabel: React.PropTypes.string,
-
+    autoOk: PropTypes.bool,
     /**
-     * This is the initial time value of the component.
+     * Override the label of the 'Cancel' button.
      */
-    defaultTime: React.PropTypes.object,
-
+    cancelLabel: PropTypes.node,
     /**
-     * Tells the component to display the picker in
-     * ampm (12hr) format or 24hr format.
+     * The initial time value of the TimePicker.
      */
-    format: React.PropTypes.oneOf(['ampm', '24hr']),
-
+    defaultTime: PropTypes.object,
+    /**
+     * If true, the TimePicker is disabled.
+     */
+    disabled: PropTypes.bool,
+    /**
+     * Tells the component to display the picker in `ampm` (12hr) format or `24hr` format.
+     */
+    format: PropTypes.oneOf(['ampm', '24hr']),
     /**
      * Override the label of the 'OK' button.
      */
-    okLabel: React.PropTypes.string,
-
+    okLabel: PropTypes.node,
     /**
-     * Callback function that is fired when the time
-     * value changes. The time value is passed in a Date
-     * Object.Since there is no particular event associated
-     * with the change the first argument will always be null
+     * Callback function that is fired when the time value changes. The time value is passed in a Date Object.
+     * Since there is no particular event associated with the change the first argument will always be null
      * and the second argument will be the new Date instance.
      */
-    onChange: React.PropTypes.func,
-
+    onChange: PropTypes.func,
     /**
-     * Fired when the timepicker dialog is dismissed.
+     * Callback function fired when the TimePicker dialog is dismissed.
      */
-    onDismiss: React.PropTypes.func,
-
+    onDismiss: PropTypes.func,
     /**
-     * Callback function that is fired when the timepicker field gains focus.
+     * Callback function fired when the TimePicker `TextField` gains focus.
      */
-    onFocus: React.PropTypes.func,
-
+    onFocus: PropTypes.func,
     /**
-     * Fired when the timepicker dialog is shown.
+     * Callback function fired when the TimePicker dialog is shown.
      */
-    onShow: React.PropTypes.func,
-
+    onShow: PropTypes.func,
     /**
-     * Callback for touch tap event.
+     * Callback function fired when the TimePicker is tapped or clicked.
      */
-    onTouchTap: React.PropTypes.func,
-
+    onTouchTap: PropTypes.func,
     /**
-     * It's technically more correct to refer to
-     * "12 noon" and "12 midnight" rather than
-     * "12 a.m." and "12 p.m." and it avoids real
-     * confusion between different locales. By default
-     * (for compatibility reasons) TimePicker uses
-     * (12 a.m./12 p.m.) To use (noon/midnight) set pedantic={true}.
+     * If true, uses ("noon" / "midnight") instead of ("12 a.m." / "12 p.m.").
+     *
+     * It's technically more correct to refer to "12 noon" and "12 midnight" rather than "12 a.m." and "12 p.m."
+     * and it avoids confusion between different locales. By default (for compatibility reasons) TimePicker uses
+     * ("12 a.m." / "12 p.m.").
      */
-    pedantic: React.PropTypes.bool,
-
+    pedantic: PropTypes.bool,
     /**
      * Override the inline-styles of the root element.
      */
-    style: React.PropTypes.object,
-
+    style: PropTypes.object,
     /**
      * Override the inline-styles of TimePicker's TextField element.
      */
-    textFieldStyle: React.PropTypes.object,
-
+    textFieldStyle: PropTypes.object,
     /**
      * Sets the time for the Time Picker programmatically.
      */
-    value: React.PropTypes.object,
+    value: PropTypes.object,
 
-  },
+  };
 
-  contextTypes: {
-    muiTheme: React.PropTypes.object,
-  },
+  static defaultProps = {
+    defaultTime: null,
+    disabled: false,
+    format: 'ampm',
+    pedantic: false,
+    autoOk: false,
+    style: {},
+    okLabel: 'OK',
+    cancelLabel: 'Cancel',
+  };
 
-  getDefaultProps() {
-    return {
-      defaultTime: null,
-      format: 'ampm',
-      pedantic: false,
-      autoOk: false,
-      style: {},
-      okLabel: 'OK',
-      cancelLabel: 'Cancel',
-    };
-  },
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      time: this._isControlled() ? this._getControlledTime() : this.props.defaultTime,
-      dialogTime: new Date(),
-      muiTheme: this.context.muiTheme || getMuiTheme(),
-    };
-  },
+  state = {
+    time: this.isControlled() ? this.getControlledTime() : this.props.defaultTime,
+    dialogTime: new Date(),
+  };
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    const newState = this.state;
-    if (nextContext.muiTheme) {
-      newState.muiTheme = nextContext.muiTheme;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value !== this.props.value) {
+      this.setState({
+        time: this.getControlledTime(nextProps),
+      });
     }
-    newState.time = this._getControlledTime(nextProps);
-    this.setState(newState);
-  },
-
+  }
 
   /**
    * Deprecated.
@@ -139,7 +118,7 @@ const TimePicker = React.createClass({
     instead. Or use the TimePicker as a controlled component with the value
     property.`);
     return this.state.time;
-  },
+  }
 
   /**
    * Deprecated
@@ -150,53 +129,53 @@ const TimePicker = React.createClass({
     instead. Or use the TimePicker as a controlled component with the value
     property.`);
     this.setState({time: time ? time : emptyTime});
-  },
+  }
 
   /**
    * Alias for `openDialog()` for an api consistent with TextField.
    */
   focus() {
     this.openDialog();
-  },
+  }
 
   openDialog() {
     this.setState({
       dialogTime: this.state.time,
     });
     this.refs.dialogWindow.show();
-  },
+  }
 
-  _handleDialogAccept(t) {
+  handleAcceptDialog = (time) => {
     this.setState({
-      time: t,
+      time: time,
     });
-    if (this.props.onChange) this.props.onChange(null, t);
-  },
+    if (this.props.onChange) this.props.onChange(null, time);
+  };
 
-  _handleInputFocus(event) {
+  handleFocusInput = (event) => {
     event.target.blur();
     if (this.props.onFocus) this.props.onFocus(event);
-  },
+  };
 
-  _handleInputTouchTap(event) {
+  handleTouchTapInput = (event) => {
     event.preventDefault();
 
-    this.openDialog();
+    if (!this.props.disabled) this.openDialog();
 
     if (this.props.onTouchTap) this.props.onTouchTap(event);
-  },
+  };
 
-  _isControlled() {
+  isControlled() {
     return this.props.value !== null;
-  },
+  }
 
-  _getControlledTime(props = this.props) {
+  getControlledTime(props = this.props) {
     let result = null;
-    if (DateTime.isDateObject(props.value)) {
+    if (props.value instanceof Date) {
       result = props.value;
     }
     return result;
-  },
+  }
 
   render() {
     const {
@@ -204,8 +183,8 @@ const TimePicker = React.createClass({
       cancelLabel,
       format,
       okLabel,
-      onFocus,
-      onTouchTap,
+      onFocus, // eslint-disable-line no-unused-vars
+      onTouchTap, // eslint-disable-line no-unused-vars
       onShow,
       onDismiss,
       pedantic,
@@ -214,12 +193,8 @@ const TimePicker = React.createClass({
       ...other,
     } = this.props;
 
-    const {
-      muiTheme: {
-        prepareStyles,
-      },
-      time,
-    } = this.state;
+    const {prepareStyles} = this.context.muiTheme;
+    const {time} = this.state;
 
     return (
       <div style={prepareStyles(Object.assign({}, style))}>
@@ -227,14 +202,14 @@ const TimePicker = React.createClass({
           {...other}
           style={textFieldStyle}
           ref="input"
-          value={time === emptyTime ? null : DateTime.formatTime(time, format, pedantic)}
-          onFocus={this._handleInputFocus}
-          onTouchTap={this._handleInputTouchTap}
+          value={time === emptyTime ? null : formatTime(time, format, pedantic)}
+          onFocus={this.handleFocusInput}
+          onTouchTap={this.handleTouchTapInput}
         />
         <TimePickerDialog
           ref="dialogWindow"
           initialTime={this.state.dialogTime}
-          onAccept={this._handleDialogAccept}
+          onAccept={this.handleAcceptDialog}
           onShow={onShow}
           onDismiss={onDismiss}
           format={format}
@@ -244,7 +219,7 @@ const TimePicker = React.createClass({
         />
       </div>
     );
-  },
-});
+  }
+}
 
 export default TimePicker;
